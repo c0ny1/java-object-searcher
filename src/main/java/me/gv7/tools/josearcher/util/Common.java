@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static me.gv7.tools.josearcher.util.BlacklistUtil.isIn;
+
 public class Common {
     public static String getBanner(){
         String banner = "#############################################################\n" +
@@ -83,30 +85,40 @@ public class Common {
      */
     public static boolean matchObject(String field_name, Object field_value, List<Keyword> keyword_list){
          String field_type = field_value.getClass().getSimpleName();
+        boolean isInFieldName = false;
+        boolean isInFieldValue = false;
+        boolean isInFieldType = false;
          for(Keyword keyword:keyword_list){
 
              //属性名
-             if(keyword.getField_name() != null
-                && !keyword.getField_name().equals("")
-                && !field_name.toLowerCase().contains(keyword.getField_name().toLowerCase())){
-                 continue;
+             if(keyword.getField_name() != null){
+                 if(isIn(field_name,keyword.getField_name())){
+                     isInFieldName = true;
+                 }
+             }else{
+                 isInFieldName = true;
              }
 
              //属性值
-             if(keyword.getField_value() != null
-                     && !keyword.getField_value().equals("")
-                     && !field_value.toString().toLowerCase().contains(keyword.getField_value().toLowerCase())){
-                 continue;
+             if(keyword.getField_value() != null){
+                 if(isIn(field_value.toString(),keyword.getField_value())){
+                     isInFieldValue = true;
+                 }
+             }else{
+                 isInFieldValue = true;
              }
-
              //属性类型
-             if(keyword.getField_type() != null
-                     && !keyword.getField_type().equals("")
-                     && !field_type.toLowerCase().contains(keyword.getField_type().toLowerCase())){
-                 continue;
+             if(keyword.getField_type() != null){
+                 if(isIn(field_type,keyword.getField_type())){
+                     isInFieldType = true;
+                 }
+             }else{
+                 isInFieldType = true;
              }
 
-             return true;
+             if(isInFieldName && isInFieldValue && isInFieldType){
+                 return true;
+             }
          }
          return false;
     }

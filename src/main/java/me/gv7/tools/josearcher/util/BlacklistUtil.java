@@ -34,7 +34,7 @@ public class BlacklistUtil {
         return false;
     }
 
-    public static boolean is(String target,String keyword){
+    public static boolean isIn(String target,String keyword){
         if(target == null){
             if(keyword == null){
                 return true;
@@ -59,22 +59,28 @@ public class BlacklistUtil {
         for(Blacklist blacklist:blacklists){
             //属性名
             if(blacklist.getField_name() != null){
-                if(is(field_name,blacklist.getField_name())){
+                if(isIn(field_name,blacklist.getField_name())){
                     isInFieldName = true;
                 }
+            }else{
+                isInFieldName = true;
             }
 
             //属性值
             if(blacklist.getField_value() != null){
-                if(is(field_value.toString(),blacklist.getField_value())){
+                if(isIn(field_value.toString(),blacklist.getField_value())){
                     isInFieldValue = true;
                 }
+            }else{
+                isInFieldValue = true;
             }
             //属性类型
             if(blacklist.getField_type() != null){
-                if(is(field_type,blacklist.getField_type())){
+                if(isIn(field_type,blacklist.getField_type())){
                     isInFieldType = true;
                 }
+            }else{
+                isInFieldType = true;
             }
 
             if(isInFieldName && isInFieldValue && isInFieldType){

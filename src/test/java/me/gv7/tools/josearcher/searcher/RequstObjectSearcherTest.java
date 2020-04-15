@@ -15,12 +15,12 @@ class RequstObjectSearcherTest {
 
         //TestClass target =  new TestClass();
         List<Keyword> keys = new ArrayList<>();
-        keys.add(new Keyword.Builder().setField_type("entity").build());
+        keys.add(new Keyword.Builder().setField_type("ConcurrentHashMap").build());
 
-        List<Blacklist> blacklists = new ArrayList<>();
-        blacklists.add(new Blacklist.Builder().setField_name("parallelLockMap").build());
+        //List<Blacklist> blacklists = new ArrayList<>();
+        //blacklists.add(new Blacklist.Builder().setField_name("parallelLockMap").build());
 
-        RequstObjectSearcher searcher = new RequstObjectSearcher(thread,keys,"RequestObjectSearcherTest",10000,blacklists,true);
+        RequstObjectSearcher searcher = new RequstObjectSearcher(thread,keys,"RequestObjectSearcherTest",10000,true);
         searcher.searchObject();
     }
 }
