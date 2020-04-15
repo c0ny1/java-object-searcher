@@ -1,9 +1,12 @@
 package me.gv7.tools.josearcher.util;
 
+import me.gv7.tools.josearcher.entity.Keyword;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class Common {
     public static String getBanner(){
@@ -46,7 +49,7 @@ public class Common {
 
     public static String getCurrentDate(){
         Date date = new Date();
-        String str = "yyyMMdd";
+        String str = "yyyMMddHHmmss";
         SimpleDateFormat sdf = new SimpleDateFormat(str);
         return sdf.format(date);
     }
@@ -69,5 +72,42 @@ public class Common {
             }
         }
         return false;
+    }
+
+    /**
+     * 比较对象
+     * @param field_name
+     * @param field_value
+     * @param keyword_list
+     * @return
+     */
+    public static boolean matchObject(String field_name, Object field_value, List<Keyword> keyword_list){
+         String field_type = field_value.getClass().getSimpleName();
+         for(Keyword keyword:keyword_list){
+
+             //属性名
+             if(keyword.getField_name() != null
+                && !keyword.getField_name().equals("")
+                && !field_name.toLowerCase().contains(keyword.getField_name().toLowerCase())){
+                 continue;
+             }
+
+             //属性值
+             if(keyword.getField_value() != null
+                     && !keyword.getField_value().equals("")
+                     && !field_value.toString().toLowerCase().contains(keyword.getField_value().toLowerCase())){
+                 continue;
+             }
+
+             //属性类型
+             if(keyword.getField_type() != null
+                     && !keyword.getField_type().equals("")
+                     && !field_type.toLowerCase().contains(keyword.getField_type().toLowerCase())){
+                 continue;
+             }
+
+             return true;
+         }
+         return false;
     }
 }

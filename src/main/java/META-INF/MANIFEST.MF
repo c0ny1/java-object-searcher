@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: me.gv7.tools.josearcher.JavaObjectSearcher
+Main-Class: me.gv7.tools.josearcher.searcher.JavaObjectSearcher
 

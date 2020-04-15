@@ -4,12 +4,15 @@
  * description: 本类用于搜索对象中所有的属性
  * ps: avicii 在写完《waiting for love》是否也是一样的心情。
  */
-package me.gv7.tools.josearcher;
+package me.gv7.tools.josearcher.searcher;
 
-import me.gv7.tools.josearcher.test.TestClass;
+
+import me.gv7.tools.josearcher.util.TypeUtils;
 import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
+import static me.gv7.tools.josearcher.util.BlacklistUtil.checkObjectIsBacklist;
+import static me.gv7.tools.josearcher.util.BlacklistUtil.isBacklistType;
 import static me.gv7.tools.josearcher.util.Common.*;
 import static me.gv7.tools.josearcher.util.Common.write2log;
 import static me.gv7.tools.josearcher.util.TypeUtils.*;
@@ -32,7 +35,7 @@ public class JavaObjectSearcher {
         this.keys = keys;
         this.project_name = project_name;
         this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_chain_%s.txt",project_name,getCurrentDate());
+        this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
     }
 
 
@@ -40,7 +43,7 @@ public class JavaObjectSearcher {
         this.target = target;
         this.keys = keys;
         this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_chain_%s.txt",project_name,getCurrentDate());
+        this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
         this.max_search_depth = max_search_depth;
     }
 
@@ -49,7 +52,7 @@ public class JavaObjectSearcher {
         this.target = target;
         this.keys = keys;
         this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_chain_%s.txt",project_name,getCurrentDate());
+        this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
         this.max_search_depth = max_search_depth;
         this.is_debug = is_debug;
     }
@@ -68,7 +71,7 @@ public class JavaObjectSearcher {
             return;
         }
 
-        if (filed_object ==null || checkObjectIsSysType(filed_object) || checkObjectIsBacklist(filed_object)){
+        if (filed_object ==null || TypeUtils.isSysType(filed_object) || checkObjectIsBacklist(filed_object)){
             //如果object是null/基本数据类型/包装类/日期类型，则不需要在递归调用
             return;
         }
@@ -147,21 +150,14 @@ public class JavaObjectSearcher {
             Field[] fields = clazz.getDeclaredFields();
 
             for (Field field : fields) {
-                // 不搜索父类的私有属性
-//                if(father_level > 0 && field.isAccessible()){
-//                    return;
-//                }
 
                 field.isAccessible();
                 field.setAccessible(true);
                 String proType = field.getGenericType().toString();
                 String proName = field.getName();
 
-                if (isBasicType(field)) {
+                if (TypeUtils.isSysType(field)) {
                     //属性是基本类型跳过
-                    continue;
-                } else if (isWrapperClass(field)) {
-                    //属性是包装类跳过
                     continue;
                 } else if(isBacklistType(field)){
                     continue;
@@ -259,19 +255,5 @@ public class JavaObjectSearcher {
         System.out.println(new_log_chain);
         System.out.println("\n\n\n");
         //logger.info(new_log_chain);
-    }
-
-
-    public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException {
-        Thread thread = Thread.currentThread();
-        Field f = thread.getClass().getDeclaredField("threadLocals");
-        f.setAccessible(true);
-        Object bb = f.get(thread);
-
-        String[] keys = new String[]{"Request","ServletRequst", "Entity"};
-
-        TestClass test =  new TestClass();
-        JavaObjectSearcher grab = new JavaObjectSearcher(test,keys,"log",50,true);
-        grab.searchObject();
     }
 }
