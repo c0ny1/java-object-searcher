@@ -52,7 +52,7 @@ public class BlacklistUtil {
 
 
     public static boolean isInBlacklist(String field_name,Object field_value, List<Blacklist> blacklists){
-        String field_type = field_value.getClass().getSimpleName();
+        String field_type = field_value.getClass().getName();
         boolean isInFieldName = false;
         boolean isInFieldValue = false;
         boolean isInFieldType = false;
