@@ -27,6 +27,7 @@ public class SearchRequstByRecursive {
     private List<Blacklist> blacklists = new ArrayList<>();
     private int max_search_depth = Integer.MAX_VALUE;/* 递归搜索深度 */
     private boolean is_debug = false;
+    private String report_save_path = null;
     private String result_file;
     private String all_chain_file;
     private Set<Object> visited = new HashSet<Object>();
@@ -39,6 +40,16 @@ public class SearchRequstByRecursive {
         this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
     }
 
+    public void initSavePath(){
+        if(report_save_path == null){
+            this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
+            this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
+        }else{
+            this.result_file = String.format("%s/%s_result_%s.txt",report_save_path,model_name,getCurrentDate());
+            this.all_chain_file = String.format("%s/%s_log_%s.txt",report_save_path,model_name,getCurrentDate());
+        }
+    }
+
     public void setBlacklists(List<Blacklist> blacklists) {
         this.blacklists = blacklists;
     }
@@ -47,11 +58,16 @@ public class SearchRequstByRecursive {
         this.max_search_depth = max_search_depth;
     }
 
+    public void setReport_save_path(String report_save_path) {
+        this.report_save_path = report_save_path;
+    }
+
     public void setIs_debug(boolean is_debug) {
         this.is_debug = is_debug;
     }
 
     public void searchObject(){
+        this.initSavePath();
         searchObject(null,target,"",0);
     }
 

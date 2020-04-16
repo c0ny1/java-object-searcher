@@ -26,6 +26,7 @@ public class SearchRequstByBFS {
     //用队列存放所有依次要访问元素
     private Queue<NodeT> q = new LinkedList<NodeT>();
     //把当前的元素加入到队列尾
+    private String report_save_path = null;
     private String result_file;
     private String all_chain_file;
 
@@ -35,9 +36,18 @@ public class SearchRequstByBFS {
         this.keys = keys;
         //把当前的元素加入到队列尾
         q.offer(new NodeT.Builder().setChain("").setField_name("TargetObject").setField_object(target).build());
-        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
     }
+
+    public void initSavePath(){
+        if(report_save_path == null){
+            this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
+            this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
+        }else{
+            this.result_file = String.format("%s/%s_result_%s.txt",report_save_path,model_name,getCurrentDate());
+            this.all_chain_file = String.format("%s/%s_log_%s.txt",report_save_path,model_name,getCurrentDate());
+        }
+    }
+
 
     public void setBlacklists(List<Blacklist> blacklists) {
         this.blacklists = blacklists;
@@ -47,12 +57,16 @@ public class SearchRequstByBFS {
         this.max_search_depth = max_search_depth;
     }
 
+    public void setReport_save_path(String report_save_path) {
+        this.report_save_path = report_save_path;
+    }
+
     public void setIs_debug(boolean is_debug) {
         this.is_debug = is_debug;
     }
 
     public void searchObject(){
-
+        this.initSavePath();
         while(!q.isEmpty()){
             NodeT node = q.poll();
             String filed_name = node.getField_name();
