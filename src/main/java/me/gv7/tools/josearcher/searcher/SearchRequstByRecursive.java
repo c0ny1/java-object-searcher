@@ -12,10 +12,8 @@ import me.gv7.tools.josearcher.util.BlacklistUtil;
 import me.gv7.tools.josearcher.util.TypeUtils;
 import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import static me.gv7.tools.josearcher.util.Common.*;
 import static me.gv7.tools.josearcher.util.TypeUtils.*;
 
@@ -32,7 +30,7 @@ public class SearchRequstByRecursive {
     private boolean is_debug = false;
     private String result_file;
     private String all_chain_file;
-    private List<Object> searched = new ArrayList<>();
+    private Set<Object> visited = new HashSet<Object>();
 
 
     public SearchRequstByRecursive(Object target, List<Keyword> keys){
@@ -73,17 +71,11 @@ public class SearchRequstByRecursive {
         }
 
         //如果已经搜索过这个对象就返回不再继续搜索
-        if(searched.size() <= 0){
-            searched.add(filed_object);
-        }else {
-            for (Object obj : searched) {
-                if (obj == filed_object) {
-                    return;
-                }
-            }
-            searched.add(filed_object);
+        if(!visited.contains(filed_object)) {
+            visited.add(filed_object);
+        }else{
+            return;
         }
-
 
         String new_log_chain = "";
         Class clazz = filed_object.getClass();
