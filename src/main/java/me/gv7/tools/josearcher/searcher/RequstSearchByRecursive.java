@@ -22,53 +22,51 @@ import static me.gv7.tools.josearcher.util.TypeUtils.*;
 /**
  * 本类用于搜索Java对象中是否存在request相关的属性，比如可以在反序列化需要回显的场景，用于辅助挖掘request对象。
  */
-public class RequstObjectSearcher {
-    private Logger logger = Logger.getLogger(RequstObjectSearcher.class);
+public class RequstSearchByRecursive {
+    private Logger logger = Logger.getLogger(RequstSearchByRecursive.class);
+    private String model_name = RequstSearchByRecursive.class.getSimpleName();
     private Object target;
     private List<Keyword> keys;
     private List<Blacklist> blacklists = new ArrayList<>();
-    private int max_search_depth = 500;/* 递归搜索深度 */
-    private boolean is_search_all = false; /* true:搜索全部 false:搜到就返回,不会继续对命中目标的属性继续搜索 */
+    private int max_search_depth = 1000;/* 递归搜索深度 */
     private boolean is_debug = false;
-    private String project_name;
     private String result_file;
     private String all_chain_file;
     private List<Object> searched = new ArrayList<>();
 
 
-    public RequstObjectSearcher(Object target, List<Keyword> keys, String project_name){
+    public RequstSearchByRecursive(Object target, List<Keyword> keys){
         this.target = target;
         this.keys = keys;
-        this.project_name = project_name;
-        this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
+        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
+        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
     }
 
 
-    public RequstObjectSearcher(Object target, List<Keyword> keys, String project_name, int max_search_depth){
+    public RequstSearchByRecursive(Object target, List<Keyword> keys, int max_search_depth){
         this.target = target;
         this.keys = keys;
-        this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
+        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
+        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
         this.max_search_depth = max_search_depth;
     }
 
 
-    public RequstObjectSearcher(Object target, List<Keyword> keys, String project_name, int max_search_depth, boolean is_debug){
+    public RequstSearchByRecursive(Object target, List<Keyword> keys, int max_search_depth, boolean is_debug){
         this.target = target;
         this.keys = keys;
-        this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
+        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
+        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
         this.max_search_depth = max_search_depth;
         this.is_debug = is_debug;
     }
 
 
-    public RequstObjectSearcher(Object target, List<Keyword> keys, String project_name, int max_search_depth,List<Blacklist> blacklists, boolean is_debug){
+    public RequstSearchByRecursive(Object target, List<Keyword> keys, int max_search_depth, List<Blacklist> blacklists, boolean is_debug){
         this.target = target;
         this.keys = keys;
-        this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
+        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
+        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
         this.max_search_depth = max_search_depth;
         this.blacklists = blacklists;
         this.is_debug = is_debug;
@@ -117,16 +115,7 @@ public class RequstObjectSearcher {
         }
 
 
-        // 搜索
-        if(!is_search_all){
-            if(matchObject(filed_name,filed_object,keys)){
-                write2log(result_file,new_log_chain + "\n\n\n");
-                if(is_debug) {
-                    write2log(all_chain_file, new_log_chain + "\n\n\n");
-                }
-                return;
-            }
-        }
+
 
         if(filed_object instanceof List){
 
@@ -158,7 +147,7 @@ public class RequstObjectSearcher {
                     }
                 }
             }catch (Throwable e){
-                logger.error(String.format("%s - %s",project_name,"clazz.isArray"),e);
+                logger.error(String.format("%s - %s",this.model_name,"clazz.isArray"),e);
             }
         }
 
@@ -178,7 +167,7 @@ public class RequstObjectSearcher {
                 try {
                     subObj = field.get(filed_object);
                 } catch (Throwable e) {
-                    logger.error(String.format("%s - %s",project_name,"class"),e);
+                    logger.error(String.format("%s - %s",this.model_name,"class"),e);
                 }
 
                 if(subObj == null){
@@ -205,7 +194,7 @@ public class RequstObjectSearcher {
                             }
                         }
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"isList"),e);
+                        logger.error(String.format("%s - %s",this.model_name,"isList"),e);
                     }
                 } else if (isMap(field)) {
                     try {
@@ -225,13 +214,17 @@ public class RequstObjectSearcher {
                         }
 
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"isMap"),e);
+                        logger.error(String.format("%s - %s",this.model_name,"isMap"),e);
                     }
                 } else if (field.getType().isArray()) {
                     try {
                         //属性是数组类型则遍历
-                        //field.setAccessible(true);
-                        Object[] objArr = (Object[]) field.get(filed_object);
+                        Object obj = field.get(filed_object);
+                        if(obj == null){
+                            continue;
+                        }
+
+                        Object[] objArr = (Object[]) obj;
                         if (objArr != null && objArr.length > 0) {
                             current_depth++;
                             for (int i = 0; i < objArr.length; i++) {
@@ -248,32 +241,28 @@ public class RequstObjectSearcher {
                             }
                         }
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"isArray"),e);
+                        logger.error(String.format("%s - %s",this.model_name,"isArray"),e);
                     }
                 } else {
                     try {
                         //class类型的遍历
                         searchObject(proName, subObj, new_log_chain, current_depth);
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"class"),e);
+                        logger.error(String.format("%s - %s",this.model_name,"class"),e);
                     }
                 }
             }
         }
 
-
-        // 搜索
-        if(is_search_all){
-            if(matchObject(filed_name,filed_object,keys)){
-                write2log(result_file,new_log_chain + "\n\n\n");
-            }
+        if(matchObject(filed_name,filed_object,keys)){
+            write2log(result_file,new_log_chain + "\n\n\n");
         }
 
         if(is_debug) {
             write2log(all_chain_file, new_log_chain + "\n\n\n");
         }
+
         System.out.println(new_log_chain);
         System.out.println("\n\n\n");
-        //logger.info(new_log_chain);
     }
 }

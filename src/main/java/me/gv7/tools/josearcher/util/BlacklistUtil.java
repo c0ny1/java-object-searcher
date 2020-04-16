@@ -7,33 +7,6 @@ import me.gv7.tools.josearcher.entity.Blacklist;
 
 public class BlacklistUtil {
 
-    public static boolean isInBlacklist1(String field_name,Object field_value, List<Blacklist> blacklists){
-        String field_type = field_value.getClass().getSimpleName();
-        for(Blacklist blacklist:blacklists){
-            //属性名
-            if(blacklist.getField_name() != null
-                    && !blacklist.getField_name().equals("")
-                    && field_name != null
-                    && !field_name.toLowerCase().contains(blacklist.getField_name().toLowerCase())){
-                continue;
-            }
-            //属性值
-            if(blacklist.getField_value() != null
-                    && !blacklist.getField_value().equals("")
-                    && !field_value.toString().toLowerCase().contains(blacklist.getField_value().toLowerCase())){
-                continue;
-            }
-            //属性类型
-            if(blacklist.getField_type() != null
-                    && !blacklist.getField_type().equals("")
-                    && !field_type.toLowerCase().contains(blacklist.getField_type().toLowerCase())){
-                continue;
-            }
-            return true;
-        }
-        return false;
-    }
-
     public static boolean isIn(String target,String keyword){
         if(target == null){
             if(keyword == null){
