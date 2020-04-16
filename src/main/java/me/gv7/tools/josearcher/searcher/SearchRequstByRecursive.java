@@ -22,56 +22,37 @@ import static me.gv7.tools.josearcher.util.TypeUtils.*;
 /**
  * 本类用于搜索Java对象中是否存在request相关的属性，比如可以在反序列化需要回显的场景，用于辅助挖掘request对象。
  */
-public class RequstSearchByRecursive {
-    private Logger logger = Logger.getLogger(RequstSearchByRecursive.class);
-    private String model_name = RequstSearchByRecursive.class.getSimpleName();
+public class SearchRequstByRecursive {
+    private Logger logger = Logger.getLogger(SearchRequstByRecursive.class);
+    private String model_name = SearchRequstByRecursive.class.getSimpleName();
     private Object target;
     private List<Keyword> keys;
     private List<Blacklist> blacklists = new ArrayList<>();
-    private int max_search_depth = 1000;/* 递归搜索深度 */
+    private int max_search_depth = Integer.MAX_VALUE;/* 递归搜索深度 */
     private boolean is_debug = false;
     private String result_file;
     private String all_chain_file;
     private List<Object> searched = new ArrayList<>();
 
 
-    public RequstSearchByRecursive(Object target, List<Keyword> keys){
+    public SearchRequstByRecursive(Object target, List<Keyword> keys){
         this.target = target;
         this.keys = keys;
         this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
         this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
     }
 
-
-    public RequstSearchByRecursive(Object target, List<Keyword> keys, int max_search_depth){
-        this.target = target;
-        this.keys = keys;
-        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
-        this.max_search_depth = max_search_depth;
-    }
-
-
-    public RequstSearchByRecursive(Object target, List<Keyword> keys, int max_search_depth, boolean is_debug){
-        this.target = target;
-        this.keys = keys;
-        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
-        this.max_search_depth = max_search_depth;
-        this.is_debug = is_debug;
-    }
-
-
-    public RequstSearchByRecursive(Object target, List<Keyword> keys, int max_search_depth, List<Blacklist> blacklists, boolean is_debug){
-        this.target = target;
-        this.keys = keys;
-        this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
-        this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
-        this.max_search_depth = max_search_depth;
+    public void setBlacklists(List<Blacklist> blacklists) {
         this.blacklists = blacklists;
-        this.is_debug = is_debug;
     }
 
+    public void setMax_search_depth(int max_search_depth) {
+        this.max_search_depth = max_search_depth;
+    }
+
+    public void setIs_debug(boolean is_debug) {
+        this.is_debug = is_debug;
+    }
 
     public void searchObject(){
         searchObject(null,target,"",0);

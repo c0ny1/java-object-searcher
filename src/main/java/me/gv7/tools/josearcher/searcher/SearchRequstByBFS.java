@@ -19,6 +19,8 @@ public class SearchRequstByBFS {
     private Object target;
     private List<Keyword> keys = new ArrayList<>();
     private List<Blacklist> blacklists = new ArrayList<>();
+    private int max_search_depth = Integer.MAX_VALUE;/* 递归搜索深度 */
+    private boolean is_debug = true;
     //记录所有访问过的元素
     private Set<Object> visited = new HashSet<Object>();
     //用队列存放所有依次要访问元素
@@ -26,7 +28,8 @@ public class SearchRequstByBFS {
     //把当前的元素加入到队列尾
     private String result_file;
     private String all_chain_file;
-    private boolean is_debug = true;
+
+
     public SearchRequstByBFS(Object target, List<Keyword> keys){
         this.target = target;
         this.keys = keys;
@@ -36,6 +39,17 @@ public class SearchRequstByBFS {
         this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
     }
 
+    public void setBlacklists(List<Blacklist> blacklists) {
+        this.blacklists = blacklists;
+    }
+
+    public void setMax_search_depth(int max_search_depth) {
+        this.max_search_depth = max_search_depth;
+    }
+
+    public void setIs_debug(boolean is_debug) {
+        this.is_debug = is_debug;
+    }
 
     public void searchObject(){
 
@@ -49,6 +63,10 @@ public class SearchRequstByBFS {
             //被访问过了，就不访问，防止死循环
             if(!visited.contains(filed_object)){
                 visited.add(filed_object);
+                //最多挖多深
+                if(current_depth > max_search_depth){
+                    return;
+                }
 
                 if(log_chain != null && log_chain != ""){
                     current_depth++;
@@ -56,21 +74,18 @@ public class SearchRequstByBFS {
                 }else{
                     new_log_chain = String.format("%s = {%s}","TargetObject",filed_object.getClass().getName());
                 }
-                System.out.println(new_log_chain);
-                // 搜索操作
 
+                // 搜索操作
                 if(matchObject(filed_name,filed_object,keys)){
                     write2log(result_file,new_log_chain + "\n\n\n");
-                    if(is_debug) {
-                        write2log(all_chain_file, new_log_chain + "\n\n\n");
-                    }
                 }
-
-
-                Class clazz = filed_object.getClass();
-
+                if(is_debug) {
+                    write2log(all_chain_file, new_log_chain + "\n\n\n");
+                }
+                System.out.println(new_log_chain);
 
                 // 添加新节点到队列
+                Class clazz = filed_object.getClass();
                 if(filed_object instanceof List){
 
                 }
@@ -82,7 +97,6 @@ public class SearchRequstByBFS {
                     if (map!=null && map.size()>0){
                         Iterator iterator = map.values().iterator();
                         while (iterator.hasNext()){
-                            //searchObject(filed_name,iterator.next(),new_log_chain,current_depth);
                             NodeT n = new NodeT.Builder().setField_name(filed_name).setField_object(iterator.next()).setChain(new_log_chain).setCurrent_depth(current_depth).build();
                             q.offer(n);
                         }
@@ -101,7 +115,6 @@ public class SearchRequstByBFS {
                                 }
                                 String arr_type = obj_arr[i].getClass().getName();
                                 String arr_name = String.format("[%d] = {%s}",i,arr_type);
-                                //searchObject(arr_name,obj_arr[i], new_log_chain,current_depth);
                                 NodeT n = new NodeT.Builder().setField_name(arr_name).setField_object(obj_arr[i]).setChain(new_log_chain).setCurrent_depth(current_depth).build();
                                 q.offer(n);
                             }
@@ -147,7 +160,6 @@ public class SearchRequstByBFS {
                                             continue;
                                         }
                                         String list_name = String.format("[%d]", i);
-                                        //searchObject(list_name, list.get(i), tmp_log_chain, current_depth);
                                         NodeT n = new NodeT.Builder().setField_name(list_name).setField_object(list.get(i)).setChain(tmp_log_chain).setCurrent_depth(current_depth).build();
                                         q.offer(n);
                                     }
@@ -168,7 +180,6 @@ public class SearchRequstByBFS {
                                         Object key = iter.next();
                                         Object value = map.get(key);
                                         String map_name = String.format("[%s]", key.toString());
-                                        //searchObject(map_name, value, tmp_log_chain, current_depth);
                                         NodeT n = new NodeT.Builder().setField_name(map_name).setField_object(value).setChain(tmp_log_chain).setCurrent_depth(current_depth).build();
                                         q.offer(n);
                                     }
@@ -194,10 +205,7 @@ public class SearchRequstByBFS {
                                         }
 
                                         String tmp_log_chain = String.format("%s \n%s ---> %s = {%s}", new_log_chain, getBlank(current_depth), proName, proType);
-
-                                        String arrType = objArr[i].getClass().getName();
                                         String arr_name = String.format("[%d]", i);
-                                        //searchObject(arr_name, objArr[i], tmp_log_chain, current_depth);
                                         NodeT n = new NodeT.Builder().setField_name(arr_name).setField_object(objArr[i]).setChain(tmp_log_chain).setCurrent_depth(current_depth).build();
                                         q.offer(n);
                                     }
@@ -208,8 +216,6 @@ public class SearchRequstByBFS {
                         } else {
                             try {
                                 //class类型的遍历
-                                //searchObject(proName, subObj, new_log_chain, current_depth);
-
                                 NodeT n = new NodeT.Builder().setField_name(proName).setField_object(subObj).setChain(new_log_chain).setCurrent_depth(current_depth).build();
                                 q.offer(n);
                             } catch (Throwable e) {
