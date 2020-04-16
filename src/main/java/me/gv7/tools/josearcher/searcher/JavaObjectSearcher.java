@@ -7,15 +7,14 @@
 package me.gv7.tools.josearcher.searcher;
 
 
-import me.gv7.tools.josearcher.util.TypeUtils;
+import me.gv7.tools.josearcher.utils.CheckUtil;
+import me.gv7.tools.josearcher.utils.MatchUtil;
 import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
-import static me.gv7.tools.josearcher.util.BlacklistUtil.checkObjectIsBacklist;
-import static me.gv7.tools.josearcher.util.BlacklistUtil.isBacklistType;
-import static me.gv7.tools.josearcher.util.Common.*;
-import static me.gv7.tools.josearcher.util.Common.write2log;
-import static me.gv7.tools.josearcher.util.TypeUtils.*;
+import static me.gv7.tools.josearcher.utils.CommonUtil.*;
+import static me.gv7.tools.josearcher.utils.CommonUtil.write2log;
+import static me.gv7.tools.josearcher.utils.CheckUtil.*;
 
 public class JavaObjectSearcher {
     private Logger logger = Logger.getLogger(JavaObjectSearcher.class);
@@ -71,7 +70,7 @@ public class JavaObjectSearcher {
             return;
         }
 
-        if (filed_object ==null || TypeUtils.isSysType(filed_object) || checkObjectIsBacklist(filed_object)){
+        if (filed_object ==null || CheckUtil.isSysType(filed_object) || MatchUtil.checkObjectIsBacklist(filed_object)){
             //如果object是null/基本数据类型/包装类/日期类型，则不需要在递归调用
             return;
         }
@@ -102,7 +101,7 @@ public class JavaObjectSearcher {
 
         // 搜索
         if(!is_search_all){
-            if(matchClassType(clazz.getName(),this.keys)){
+            if(MatchUtil.matchClassType(clazz.getName(),this.keys)){
                 write2log(result_file,new_log_chain + "\n\n\n");
                 if(is_debug) {
                     write2log(all_chain_file, new_log_chain + "\n\n\n");
@@ -156,10 +155,10 @@ public class JavaObjectSearcher {
                 String proType = field.getGenericType().toString();
                 String proName = field.getName();
 
-                if (TypeUtils.isSysType(field)) {
+                if (CheckUtil.isSysType(field)) {
                     //属性是基本类型跳过
                     continue;
-                } else if(isBacklistType(field)){
+                } else if(MatchUtil.isBacklistType(field)){
                     continue;
                 }else if (isList(field)) {
                     //对List,ArrayList类型的属性遍历
@@ -243,7 +242,7 @@ public class JavaObjectSearcher {
         if(is_search_all){
             String[] chain = new_log_chain.split("--->");
             String end_point = chain.length != 0 ? chain[chain.length-1]:chain[0];
-            if(matchClassType(end_point,this.keys)){
+            if(MatchUtil.matchClassType(end_point,this.keys)){
                 write2log(result_file,new_log_chain + "\n\n\n");
 
             }
@@ -254,6 +253,5 @@ public class JavaObjectSearcher {
         }
         System.out.println(new_log_chain);
         System.out.println("\n\n\n");
-        //logger.info(new_log_chain);
     }
 }

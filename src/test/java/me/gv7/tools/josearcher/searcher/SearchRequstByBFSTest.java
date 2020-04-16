@@ -12,7 +12,7 @@ class SearchRequstByBFSTest {
         Thread thread = Thread.currentThread();
         //TestClass target =  new TestClass();
         List<Keyword> keys = new ArrayList<>();
-        keys.add(new Keyword.Builder().setField_type("java.util.concurrent.ConcurrentHashMap").build());
+        keys.add(new Keyword.Builder().setField_type("java.utils.concurrent.ConcurrentHashMap").build());
         List<Blacklist> blacklists = new ArrayList<>();
         blacklists.add(new Blacklist.Builder().setField_name("parallelLockMap").build());
         SearchRequstByBFS searcher = new SearchRequstByBFS(thread,keys);

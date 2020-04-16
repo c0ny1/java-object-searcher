@@ -8,14 +8,13 @@ package me.gv7.tools.josearcher.searcher;
 
 import me.gv7.tools.josearcher.entity.Blacklist;
 import me.gv7.tools.josearcher.entity.Keyword;
-import me.gv7.tools.josearcher.util.BlacklistUtil;
-import me.gv7.tools.josearcher.util.TypeUtils;
+import me.gv7.tools.josearcher.utils.CheckUtil;
+import me.gv7.tools.josearcher.utils.MatchUtil;
 import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static me.gv7.tools.josearcher.util.Common.*;
-import static me.gv7.tools.josearcher.util.TypeUtils.*;
+import static me.gv7.tools.josearcher.utils.CommonUtil.*;
+import static me.gv7.tools.josearcher.utils.CheckUtil.*;
 
 /**
  * 本类用于搜索Java对象中是否存在request相关的属性，比如可以在反序列化需要回显的场景，用于辅助挖掘request对象。
@@ -65,7 +64,7 @@ public class SearchRequstByRecursive {
             return;
         }
 
-        if (filed_object == null || TypeUtils.isSysType(filed_object) || BlacklistUtil.isInBlacklist(filed_name,filed_object,this.blacklists)){
+        if (filed_object == null || CheckUtil.isSysType(filed_object) || MatchUtil.isInBlacklist(filed_name,filed_object,this.blacklists)){
             //如果object是null/基本数据类型/包装类/日期类型，则不需要在递归调用
             return;
         }
@@ -145,10 +144,10 @@ public class SearchRequstByRecursive {
 
                 if(subObj == null){
                     continue;
-                }else if (TypeUtils.isSysType(field)) {
+                }else if (CheckUtil.isSysType(field)) {
                     //属性是系统类型跳过
                     continue;
-                } else if(BlacklistUtil.isInBlacklist(proName,subObj,this.blacklists)){
+                } else if(MatchUtil.isInBlacklist(proName,subObj,this.blacklists)){
                     continue;
                 }else if (isList(field)) {
                     //对List,ArrayList类型的属性遍历
@@ -227,7 +226,7 @@ public class SearchRequstByRecursive {
             }
         }
 
-        if(matchObject(filed_name,filed_object,keys)){
+        if(MatchUtil.matchObject(filed_name,filed_object,keys)){
             write2log(result_file,new_log_chain + "\n\n\n");
         }
 

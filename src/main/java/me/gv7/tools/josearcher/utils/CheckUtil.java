@@ -1,8 +1,8 @@
-package me.gv7.tools.josearcher.util;
+package me.gv7.tools.josearcher.utils;
 
 import java.lang.reflect.Field;
 
-public class TypeUtils {
+public class CheckUtil {
 
     public static boolean isSysType(Object object){
         String type = object.getClass().toString();

@@ -3,15 +3,15 @@ package me.gv7.tools.josearcher.searcher;
 import me.gv7.tools.josearcher.entity.Blacklist;
 import me.gv7.tools.josearcher.entity.Keyword;
 import me.gv7.tools.josearcher.entity.NodeT;
-import me.gv7.tools.josearcher.util.BlacklistUtil;
-import me.gv7.tools.josearcher.util.TypeUtils;
+import me.gv7.tools.josearcher.utils.CheckUtil;
+import me.gv7.tools.josearcher.utils.MatchUtil;
 import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
-import static me.gv7.tools.josearcher.util.Common.*;
-import static me.gv7.tools.josearcher.util.Common.write2log;
-import static me.gv7.tools.josearcher.util.TypeUtils.isList;
-import static me.gv7.tools.josearcher.util.TypeUtils.isMap;
+import static me.gv7.tools.josearcher.utils.CommonUtil.*;
+import static me.gv7.tools.josearcher.utils.CommonUtil.write2log;
+import static me.gv7.tools.josearcher.utils.CheckUtil.isList;
+import static me.gv7.tools.josearcher.utils.CheckUtil.isMap;
 
 public class SearchRequstByBFS {
     private Logger logger = Logger.getLogger(SearchRequstByBFS.class);
@@ -76,7 +76,7 @@ public class SearchRequstByBFS {
                 }
 
                 // 搜索操作
-                if(matchObject(filed_name,filed_object,keys)){
+                if(MatchUtil.matchObject(filed_name,filed_object,keys)){
                     write2log(result_file,new_log_chain + "\n\n\n");
                 }
                 if(is_debug) {
@@ -142,10 +142,10 @@ public class SearchRequstByBFS {
 
                         if(subObj == null){
                             continue;
-                        }else if (TypeUtils.isSysType(field)) {
+                        }else if (CheckUtil.isSysType(field)) {
                             //属性是系统类型跳过
                             continue;
-                        } else if(BlacklistUtil.isInBlacklist(proName,subObj,this.blacklists)){
+                        } else if(MatchUtil.isInBlacklist(proName,subObj,this.blacklists)){
                             continue;
                         }else if (isList(field)) {
                             //对List,ArrayList类型的属性遍历

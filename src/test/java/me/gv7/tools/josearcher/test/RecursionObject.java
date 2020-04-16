@@ -91,9 +91,9 @@ public class RecursionObject {
                 }else if ("class java.lang.Byte".equals(proType) || "class java.lang.Short".equals(proType) || "class java.lang.Integer".equals(proType) || "class java.lang.Long".equals(proType) || "class java.lang.Double".equals(proType) || "class java.lang.Float".equals(proType) || "class java.lang.Boolean".equals(proType) || ("class java.lang.String".equals(proType) && !targetProName.equals(proName))){
                     //属性是包装类跳过
                     continue;
-                }else if (proType.startsWith("java.util")){
+                }else if (proType.startsWith("java.utils")){
                     //属性是集合类型则遍历
-                    if (proType.startsWith("java.util.List")){
+                    if (proType.startsWith("java.utils.List")){
                         //对List类型的属性遍历
                         PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(), clazz);
                         Method method = descriptor.getReadMethod();
@@ -109,7 +109,7 @@ public class RecursionObject {
                             }
                         }
 
-                    }else if (proType.startsWith("java.util.Map")){
+                    }else if (proType.startsWith("java.utils.Map")){
                         //对Map类型的属性遍历
                         PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(), clazz);
                         Method method = descriptor.getReadMethod();
@@ -164,7 +164,7 @@ public class RecursionObject {
     }
 
     /**
-     * 检查object是否为java的基本数据类型/包装类/java.util.Date/java.sql.Date
+     * 检查object是否为java的基本数据类型/包装类/java.utils.Date/java.sql.Date
      * @param object
      * @return
      */

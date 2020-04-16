@@ -1,11 +1,67 @@
-package me.gv7.tools.josearcher.util;
+package me.gv7.tools.josearcher.utils;
+
+import me.gv7.tools.josearcher.entity.Blacklist;
+import me.gv7.tools.josearcher.entity.Keyword;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import me.gv7.tools.josearcher.entity.Blacklist;
 
+public class MatchUtil {
+    public static boolean matchClassType(String clsType,String[] keys){
+        for(String key:keys){
+            if(clsType.contains(key)){
+                return true;
+            }
+        }
+        return false;
+    }
 
-public class BlacklistUtil {
+    /**
+     * 比较对象
+     * @param field_name
+     * @param field_value
+     * @param keyword_list
+     * @return
+     */
+    public static boolean matchObject(String field_name, Object field_value, List<Keyword> keyword_list){
+        String field_type = field_value.getClass().getName();
+        boolean isInFieldName = false;
+        boolean isInFieldValue = false;
+        boolean isInFieldType = false;
+        for(Keyword keyword:keyword_list){
+
+            //属性名
+            if(keyword.getField_name() != null){
+                if(isIn(field_name,keyword.getField_name())){
+                    isInFieldName = true;
+                }
+            }else{
+                isInFieldName = true;
+            }
+
+            //属性值
+            if(keyword.getField_value() != null){
+                if(isIn(field_value.toString(),keyword.getField_value())){
+                    isInFieldValue = true;
+                }
+            }else{
+                isInFieldValue = true;
+            }
+            //属性类型
+            if(keyword.getField_type() != null){
+                if(isIn(field_type,keyword.getField_type())){
+                    isInFieldType = true;
+                }
+            }else{
+                isInFieldType = true;
+            }
+
+            if(isInFieldName && isInFieldValue && isInFieldType){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static boolean isIn(String target,String keyword){
         if(target == null){
@@ -67,8 +123,8 @@ public class BlacklistUtil {
 
     public static boolean checkObjectIsBacklist(Object object){
         String objType = object.getClass().getName();
-        if ("java.util.Locale".equals(objType) ||
-                "java.util.logging.Level".equals(objType) ||
+        if ("java.utils.Locale".equals(objType) ||
+                "java.utils.logging.Level".equals(objType) ||
                 "java.lang.Class".equals(objType) ||
                 "java.lang.Character".equals(objType) ||
                 "java.io.File".equals(objType) ||
@@ -84,8 +140,8 @@ public class BlacklistUtil {
 
     public static boolean isBacklistType(Field field){
         String objType = field.getGenericType().toString();
-        if ("class java.util.Locale".equals(objType) ||
-                "class java.util.logging.Level".equals(objType) ||
+        if ("class java.utils.Locale".equals(objType) ||
+                "class java.utils.logging.Level".equals(objType) ||
                 objType.startsWith("class java.lang.reflect.") ||
                 objType.startsWith("class sun.misc.")){
             return true;
