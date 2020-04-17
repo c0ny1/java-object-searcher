@@ -74,13 +74,20 @@ public class SearchRequstByBFS {
             String log_chain = node.getChain();
             String new_log_chain = null;
             int current_depth = node.getCurrent_depth();
+
+            //最多挖多深
+            if(current_depth > max_search_depth){
+                continue;
+            }
+
+            if (filed_object == null || CheckUtil.isSysType(filed_object) || MatchUtil.isInBlacklist(filed_name,filed_object,this.blacklists)){
+                //如果object是null/基本数据类型/包装类/日期类型，则不需要在递归调用
+                continue;
+            }
+
             //被访问过了，就不访问，防止死循环
             if(!visited.contains(filed_object)){
                 visited.add(filed_object);
-                //最多挖多深
-                if(current_depth > max_search_depth){
-                    return;
-                }
 
                 if(log_chain != null && log_chain != ""){
                     current_depth++;
