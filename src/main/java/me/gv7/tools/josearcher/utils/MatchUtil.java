@@ -32,7 +32,7 @@ public class MatchUtil {
 
             //属性名
             if(keyword.getField_name() != null){
-                if(isIn(field_name,keyword.getField_name())){
+                if(isIn(field_name,keyword.getField_name(),false)){
                     isInFieldName = true;
                 }
             }else{
@@ -41,7 +41,7 @@ public class MatchUtil {
 
             //属性值
             if(keyword.getField_value() != null){
-                if(isIn(field_value.toString(),keyword.getField_value())){
+                if(isIn(field_value.toString(),keyword.getField_value(),false)){
                     isInFieldValue = true;
                 }
             }else{
@@ -49,7 +49,7 @@ public class MatchUtil {
             }
             //属性类型
             if(keyword.getField_type() != null){
-                if(isIn(field_type,keyword.getField_type())){
+                if(isIn(field_type,keyword.getField_type(),false)){
                     isInFieldType = true;
                 }
             }else{
@@ -63,7 +63,9 @@ public class MatchUtil {
         return false;
     }
 
-    public static boolean isIn(String target,String keyword){
+    public static boolean isIn(String target,String keyword,boolean match_case){
+
+
         if(target == null){
             if(keyword == null){
                 return true;
@@ -71,6 +73,12 @@ public class MatchUtil {
                 return false;
             }
         }else{
+            //不区分大小写
+            if(match_case == false){
+                target = target.toLowerCase();
+                keyword = keyword.toLowerCase();
+            }
+
             if(target.contains(keyword)){
                 return true;
             }else{
@@ -88,7 +96,7 @@ public class MatchUtil {
         for(Blacklist blacklist:blacklists){
             //属性名
             if(blacklist.getField_name() != null){
-                if(isIn(field_name,blacklist.getField_name())){
+                if(isIn(field_name,blacklist.getField_name(),false)){
                     isInFieldName = true;
                 }
             }else{
@@ -97,7 +105,7 @@ public class MatchUtil {
 
             //属性值
             if(blacklist.getField_value() != null){
-                if(isIn(field_value.toString(),blacklist.getField_value())){
+                if(isIn(field_value.toString(),blacklist.getField_value(),false)){
                     isInFieldValue = true;
                 }
             }else{
@@ -105,7 +113,7 @@ public class MatchUtil {
             }
             //属性类型
             if(blacklist.getField_type() != null){
-                if(isIn(field_type,blacklist.getField_type())){
+                if(isIn(field_type,blacklist.getField_type(),false)){
                     isInFieldType = true;
                 }
             }else{
