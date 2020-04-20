@@ -44,7 +44,7 @@
 
 ```java
 List<Keyword> keys = new ArrayList<>();
-keys.add(new Keyword.Builder().setField_type("table").setField_type("test").build());
+keys.add(new Keyword.Builder().setField_name("table").setField_type("test").build());
 keys.add(new Keyword.Builder().setField_name("request").setField_type("RequestInfo").build());
 ```
 
