@@ -2,13 +2,14 @@ package me.gv7.tools.josearcher.utils;
 
 import me.gv7.tools.josearcher.entity.Blacklist;
 import me.gv7.tools.josearcher.entity.Keyword;
-
 import java.lang.reflect.Field;
 import java.util.List;
 
 public class MatchUtil {
     public static boolean matchClassType(String clsType,String[] keys){
+        clsType = clsType.toLowerCase();
         for(String key:keys){
+            key = key.toLowerCase();
             if(clsType.contains(key)){
                 return true;
             }

@@ -1,7 +1,4 @@
 package me.gv7.tools.josearcher.searcher;
-/**
- * 通过广度优先算法遍历
- */
 
 import me.gv7.tools.josearcher.entity.Blacklist;
 import me.gv7.tools.josearcher.entity.Keyword;
@@ -11,14 +8,13 @@ import me.gv7.tools.josearcher.utils.MatchUtil;
 import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
-import static me.gv7.tools.josearcher.utils.CommonUtil.*;
-import static me.gv7.tools.josearcher.utils.CommonUtil.write2log;
 import static me.gv7.tools.josearcher.utils.CheckUtil.isList;
 import static me.gv7.tools.josearcher.utils.CheckUtil.isMap;
+import static me.gv7.tools.josearcher.utils.CommonUtil.*;
 
-public class SearchRequstByBFS {
-    private Logger logger = Logger.getLogger(SearchRequstByBFS.class);
-    private String model_name = SearchRequstByBFS.class.getSimpleName();
+public class SearchRequstByBFS1 {
+    private Logger logger = Logger.getLogger(SearchRequstByBFS1.class);
+    private String model_name = SearchRequstByBFS1.class.getSimpleName();
     private Object target;
     private List<Keyword> keys = new ArrayList<>();
     private List<Blacklist> blacklists = new ArrayList<>();
@@ -32,9 +28,10 @@ public class SearchRequstByBFS {
     private String report_save_path = null;
     private String result_file;
     private String all_chain_file;
+    private List<Object> searched = new ArrayList<>();
 
 
-    public SearchRequstByBFS(Object target, List<Keyword> keys){
+    public SearchRequstByBFS1(Object target, List<Keyword> keys){
         this.target = target;
         this.keys = keys;
         //把当前的元素加入到队列尾
@@ -89,8 +86,17 @@ public class SearchRequstByBFS {
             }
 
             //被访问过了，就不访问，防止死循环
-            if(!visited.contains(filed_object)){
-                visited.add(filed_object);
+            //如果已经搜索过这个对象就返回不再继续搜索
+            if(searched.size() <= 0){
+                searched.add(filed_object);
+            }else {
+                for (Object obj : searched) {
+                    if (obj == filed_object) {
+                        continue;
+                    }
+                }
+                searched.add(filed_object);
+            }
 
                 if(log_chain != null && log_chain != ""){
                     current_depth++;
@@ -247,7 +253,7 @@ public class SearchRequstByBFS {
                         }
                     }
                 }
-            }
+
         }
     }
 }

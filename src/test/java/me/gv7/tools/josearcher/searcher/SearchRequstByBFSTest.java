@@ -16,7 +16,7 @@ class SearchRequstByBFSTest {
         keys.add(new Keyword.Builder().setField_type("entity").build());
         List<Blacklist> blacklists = new ArrayList<>();
         blacklists.add(new Blacklist.Builder().setField_name("parallelLockMap").build());
-        SearchRequstByBFS searcher = new SearchRequstByBFS(target,keys);
+        SearchRequstByBFS1 searcher = new SearchRequstByBFS1(target,keys);
         //searcher.setMax_search_depth(1000);
         searcher.setIs_debug(true);
         //searcher.setBlacklists(blacklists);

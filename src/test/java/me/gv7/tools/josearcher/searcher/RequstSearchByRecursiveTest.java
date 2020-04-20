@@ -17,7 +17,7 @@ class RequstSearchByRecursiveTest {
         List<Blacklist> blacklists = new ArrayList<>();
         blacklists.add(new Blacklist.Builder().setField_name("parallelLockMap").build());
 
-        SearchRequstByRecursive searcher = new SearchRequstByRecursive(target,keys);
+        SearchRequstByRecursive1 searcher = new SearchRequstByRecursive1(target,keys);
         searcher.setIs_debug(true);
         //searcher.setMax_search_depth(1000);
         //searcher.setBlacklists(blacklists);
