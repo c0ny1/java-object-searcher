@@ -8,7 +8,7 @@ import java.util.Date;
 public class CommonUtil {
     public static String getBanner(){
         String banner = "#############################################################\n" +
-                        "   Java Object Searcher v0.1\n" +
+                        "   Java Object Searcher v0.01\n" +
                         "   author: c0ny1<root@gv7.me>\n" +
                         "   github: http://github.com/c0ny1/java-object-searcher\n" +
                         "#############################################################\n\n\n";
