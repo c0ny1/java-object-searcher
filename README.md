@@ -35,18 +35,18 @@
 
 编写代码如下：
 
-```
+```java
 List<Keyword> keys = new ArrayList<>();
 keys.add(new Keyword.Builder().setField_type("table").setField_type("test").build());
 keys.add(new Keyword.Builder().setField_name("request").setField_type("RequestInfo").build());
 ```
 
-黑名单是定义那些属性中不可能包含要搜索的目标，防止无意义的搜索，浪费时间。如果把上面的例子当做黑名单，编写的代码也是类似的。
+黑名单是定义哪些属性中不可能存有要搜索的目标对象，防止无意义的搜索，浪费时间。如果把上面的例子当做黑名单，编写的代码也是类似的。
 
-```$xslt
+```java
 List<Blacklist> blacklists = new ArrayList<>();
-blacklists.add(new Blacklist.Builder().setField_type("table").setField_value("test").build());
-blacklists.add(new Blacklist.Builder().setField_type("request").setField_type("RequestInfo").build());
+blacklists.add(new Blacklist.Builder().setField_name("table").setField_value("test").build());
+blacklists.add(new Blacklist.Builder().setField_name("request").setField_type("RequestInfo").build());
 ```
 
 
@@ -54,21 +54,22 @@ blacklists.add(new Blacklist.Builder().setField_type("request").setField_type("R
 
 **1. 将项目的java引入到目标应用的classpath中**
 
-**2. 在IDEA调试时,下好断点并在计算器中输入如下代码即可搜索**
+**2. 编写调用代码搜索目标对象**
 
-在编写代码之前先选好搜索器，并根据要搜索的目标特点，然后构造好关键字(必须)和黑名单(非必须)。
+以搜索request对象为例，选好搜索器，并根据要搜索的目标特点构造好关键字(必须)和黑名单(非必须)，可写如下搜索代码到IDEA的`Evaluate`中执行。
 
-```
-//设置搜索类型包含ServletRequest，RequstGroup，Request...等关键字的对象
+```java
+//设置搜索类型包含Request关键字的对象
 List<Keyword> keys = new ArrayList<>();
-keys.add(new Keyword.Builder().setField_type("ServletRequest").build());
-keys.add(new Keyword.Builder().setField_type("RequstGroup").build());
-keys.add(new Keyword.Builder().setField_type("RequestInfo").build());
-keys.add(new Keyword.Builder().setField_type("RequestGroupInfo").build());
 keys.add(new Keyword.Builder().setField_type("Request").build());
+//定义黑名单
+List<Blacklist> blacklists = new ArrayList<>();
+blacklists.add(new Blacklist.Builder().setField_type("java.io.File").build());
 //新建一个广度优先搜索Thread.currentThread()的搜索器
 SearchRequstByBFS searcher = new SearchRequstByBFS(Thread.currentThread(),keys);
-//打开调试模式
+// 设置黑名单
+searcher.setBlacklists(blacklists);
+//打开调试模式,会生成log日志
 searcher.setIs_debug(true);
 //挖掘深度为20
 searcher.setMax_search_depth(20);
@@ -77,5 +78,5 @@ searcher.setReport_save_path("D:\\apache-tomcat-7.0.94\\bin");
 searcher.searchObject();
 ```
 
-## 0x03 更多
+## 0x04 更多
 * [半自动化挖掘request实现多种中间件回显](http://gv7.me/articles/2020/semi-automatic-mining-request-implements-multiple-middleware-echo/)
