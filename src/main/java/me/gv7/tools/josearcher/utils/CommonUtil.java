@@ -27,7 +27,7 @@ public class CommonUtil {
             }
 
             //使用true，即进行append file
-            FileWriter fileWritter = new FileWriter(file.getName(), true);
+            FileWriter fileWritter = new FileWriter(file, true);
             fileWritter.write(new_content);
             fileWritter.close();
         }catch (Exception e){

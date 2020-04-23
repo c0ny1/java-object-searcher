@@ -20,7 +20,7 @@ class SearchRequstByBFSTest {
         //searcher.setMax_search_depth(1000);
         searcher.setIs_debug(true);
         //searcher.setBlacklists(blacklists);
-        //searcher.setReport_save_path("/Users/c0ny1/Downloads/ResponseGrab/out/");
+        searcher.setReport_save_path("/Users/c0ny1/Downloads/ResponseGrab/out/");
         searcher.searchObject();
     }
 }
