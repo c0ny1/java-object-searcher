@@ -9,8 +9,8 @@ package me.gv7.tools.josearcher.searcher;
 import me.gv7.tools.josearcher.entity.Blacklist;
 import me.gv7.tools.josearcher.entity.Keyword;
 import me.gv7.tools.josearcher.utils.CheckUtil;
+import me.gv7.tools.josearcher.utils.LogUtil;
 import me.gv7.tools.josearcher.utils.MatchUtil;
-import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
 import static me.gv7.tools.josearcher.utils.CommonUtil.*;
@@ -19,9 +19,9 @@ import static me.gv7.tools.josearcher.utils.CheckUtil.*;
 /**
  * 本类用于搜索Java对象中是否存在request相关的属性，比如可以在反序列化需要回显的场景，用于辅助挖掘request对象。
  */
-public class SearchRequstByRecursive {
-    private Logger logger = Logger.getLogger(SearchRequstByRecursive.class);
-    private String model_name = SearchRequstByRecursive.class.getSimpleName();
+public class SearchRequstByDFS {
+    //private Logger logger = Logger.getLogger(SearchRequstByDFS.class);
+    private String model_name = SearchRequstByDFS.class.getSimpleName();
     private Object target;
     private List<Keyword> keys;
     private List<Blacklist> blacklists = new ArrayList<>();
@@ -30,10 +30,11 @@ public class SearchRequstByRecursive {
     private String report_save_path = null;
     private String result_file;
     private String all_chain_file;
+    private String err_log_file;
     private Set<Object> visited = new HashSet<Object>();
 
 
-    public SearchRequstByRecursive(Object target, List<Keyword> keys){
+    public SearchRequstByDFS(Object target, List<Keyword> keys){
         this.target = target;
         this.keys = keys;
         this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
@@ -44,9 +45,11 @@ public class SearchRequstByRecursive {
         if(report_save_path == null){
             this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
             this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
+            this.err_log_file = String.format("%s_error_%s.txt",model_name,getCurrentDate());
         }else{
             this.result_file = String.format("%s/%s_result_%s.txt",report_save_path,model_name,getCurrentDate());
             this.all_chain_file = String.format("%s/%s_log_%s.txt",report_save_path,model_name,getCurrentDate());
+            this.err_log_file = String.format("%s/%s_error_%s.txt",report_save_path,model_name,getCurrentDate());
         }
     }
 
@@ -64,6 +67,10 @@ public class SearchRequstByRecursive {
 
     public void setIs_debug(boolean is_debug) {
         this.is_debug = is_debug;
+    }
+
+    public void setErrLogFile(String err_log_file) {
+        this.err_log_file = err_log_file;
     }
 
     public void searchObject(){
@@ -135,7 +142,8 @@ public class SearchRequstByRecursive {
                     }
                 }
             }catch (Throwable e){
-                logger.error(String.format("%s - %s",this.model_name,"clazz.isArray"),e);
+                //logger.error(String.format("%s - %s",this.model_name,"clazz.isArray"),e);
+                LogUtil.saveThrowableInfo(e,this.err_log_file);
             }
         }
 
@@ -155,7 +163,8 @@ public class SearchRequstByRecursive {
                 try {
                     subObj = field.get(filed_object);
                 } catch (Throwable e) {
-                    logger.error(String.format("%s - %s",this.model_name,"class"),e);
+                    //logger.error(String.format("%s - %s",this.model_name,"class"),e);
+                    LogUtil.saveThrowableInfo(e,this.err_log_file);
                 }
 
                 if(subObj == null){
@@ -182,7 +191,8 @@ public class SearchRequstByRecursive {
                             }
                         }
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",this.model_name,"isList"),e);
+                        //logger.error(String.format("%s - %s",this.model_name,"isList"),e);
+                        LogUtil.saveThrowableInfo(e,this.err_log_file);
                     }
                 } else if (isMap(field)) {
                     try {
@@ -202,7 +212,8 @@ public class SearchRequstByRecursive {
                         }
 
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",this.model_name,"isMap"),e);
+                        //logger.error(String.format("%s - %s",this.model_name,"isMap"),e);
+                        LogUtil.saveThrowableInfo(e,this.err_log_file);
                     }
                 } else if (field.getType().isArray()) {
                     try {
@@ -229,14 +240,16 @@ public class SearchRequstByRecursive {
                             }
                         }
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",this.model_name,"isArray"),e);
+                        //logger.error(String.format("%s - %s",this.model_name,"isArray"),e);
+                        LogUtil.saveThrowableInfo(e,this.err_log_file);
                     }
                 } else {
                     try {
                         //class类型的遍历
                         searchObject(proName, subObj, new_log_chain, current_depth);
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",this.model_name,"class"),e);
+                        //logger.error(String.format("%s - %s",this.model_name,"class"),e);
+                        LogUtil.saveThrowableInfo(e,this.err_log_file);
                     }
                 }
             }

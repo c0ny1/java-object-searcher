@@ -7,8 +7,8 @@ import me.gv7.tools.josearcher.entity.Blacklist;
 import me.gv7.tools.josearcher.entity.Keyword;
 import me.gv7.tools.josearcher.entity.NodeT;
 import me.gv7.tools.josearcher.utils.CheckUtil;
+import me.gv7.tools.josearcher.utils.LogUtil;
 import me.gv7.tools.josearcher.utils.MatchUtil;
-import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
 import static me.gv7.tools.josearcher.utils.CommonUtil.*;
@@ -17,7 +17,7 @@ import static me.gv7.tools.josearcher.utils.CheckUtil.isList;
 import static me.gv7.tools.josearcher.utils.CheckUtil.isMap;
 
 public class SearchRequstByBFS {
-    private Logger logger = Logger.getLogger(SearchRequstByBFS.class);
+    //private Logger logger = Logger.getLogger(SearchRequstByBFS.class);
     private String model_name = SearchRequstByBFS.class.getSimpleName();
     private Object target;
     private List<Keyword> keys = new ArrayList<>();
@@ -32,6 +32,7 @@ public class SearchRequstByBFS {
     private String report_save_path = null;
     private String result_file;
     private String all_chain_file;
+    private String err_log_file;
 
 
     public SearchRequstByBFS(Object target, List<Keyword> keys){
@@ -45,9 +46,11 @@ public class SearchRequstByBFS {
         if(report_save_path == null){
             this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
             this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
+            this.err_log_file = String.format("%s_error_%s.txt",model_name,getCurrentDate());
         }else{
             this.result_file = String.format("%s/%s_result_%s.txt",report_save_path,model_name,getCurrentDate());
             this.all_chain_file = String.format("%s/%s_log_%s.txt",report_save_path,model_name,getCurrentDate());
+            this.err_log_file = String.format("%s_error_%s.txt",report_save_path,model_name,getCurrentDate());
         }
     }
 
@@ -66,6 +69,10 @@ public class SearchRequstByBFS {
 
     public void setIs_debug(boolean is_debug) {
         this.is_debug = is_debug;
+    }
+
+    public void setErrLogFile(String err_log_file) {
+        this.err_log_file = err_log_file;
     }
 
     public void searchObject(){
@@ -144,7 +151,8 @@ public class SearchRequstByBFS {
                             }
                         }
                     }catch (Throwable e){
-                        logger.error(String.format("%s - %s",model_name,"clazz.isArray"),e);
+                        //logger.error(String.format("%s - %s",model_name,"clazz.isArray"),e);
+                        LogUtil.saveThrowableInfo(e,this.err_log_file);
                     }
                 }
 
@@ -160,7 +168,8 @@ public class SearchRequstByBFS {
                         try {
                             subObj = field.get(filed_object);
                         } catch (Throwable e) {
-                            logger.error(String.format("%s - %s",model_name,"class"),e);
+                            //logger.error(String.format("%s - %s",model_name,"class"),e);
+                            LogUtil.saveThrowableInfo(e,this.err_log_file);
                         }
 
                         if(subObj == null){
@@ -188,7 +197,8 @@ public class SearchRequstByBFS {
                                     }
                                 }
                             } catch (Throwable e) {
-                                logger.error(String.format("%s - %s",model_name,"isList"),e);
+                                //logger.error(String.format("%s - %s",model_name,"isList"),e);
+                                LogUtil.saveThrowableInfo(e,this.err_log_file);
                             }
                         } else if (isMap(field)) {
                             try {
@@ -209,7 +219,8 @@ public class SearchRequstByBFS {
                                 }
 
                             } catch (Throwable e) {
-                                logger.error(String.format("%s - %s",model_name,"isMap"),e);
+                                //logger.error(String.format("%s - %s",model_name,"isMap"),e);
+                                LogUtil.saveThrowableInfo(e,this.err_log_file);
                             }
                         } else if (field.getType().isArray()) {
                             try {
@@ -234,7 +245,8 @@ public class SearchRequstByBFS {
                                     }
                                 }
                             } catch (Throwable e) {
-                                logger.error(String.format("%s - %s",model_name,"isArray"),e);
+                                //logger.error(String.format("%s - %s",model_name,"isArray"),e);
+                                LogUtil.saveThrowableInfo(e,this.err_log_file);
                             }
                         } else {
                             try {
@@ -242,7 +254,8 @@ public class SearchRequstByBFS {
                                 NodeT n = new NodeT.Builder().setField_name(proName).setField_object(subObj).setChain(new_log_chain).setCurrent_depth(current_depth).build();
                                 q.offer(n);
                             } catch (Throwable e) {
-                                logger.error(String.format("%s - %s",model_name,"class"),e);
+                                //logger.error(String.format("%s - %s",model_name,"class"),e);
+                                LogUtil.saveThrowableInfo(e,this.err_log_file);
                             }
                         }
                     }

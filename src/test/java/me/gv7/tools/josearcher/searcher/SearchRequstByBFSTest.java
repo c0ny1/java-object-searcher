@@ -16,11 +16,10 @@ class SearchRequstByBFSTest {
         keys.add(new Keyword.Builder().setField_type("entity").build());
         List<Blacklist> blacklists = new ArrayList<>();
         blacklists.add(new Blacklist.Builder().setField_name("parallelLockMap").build());
-        SearchRequstByBFS1 searcher = new SearchRequstByBFS1(target,keys);
+        SearchRequstByBFS searcher = new SearchRequstByBFS(target,keys);
         //searcher.setMax_search_depth(1000);
         searcher.setIs_debug(true);
         //searcher.setBlacklists(blacklists);
-        searcher.setReport_save_path("/Users/c0ny1/Downloads/ResponseGrab/out/");
         searcher.searchObject();
     }
 }

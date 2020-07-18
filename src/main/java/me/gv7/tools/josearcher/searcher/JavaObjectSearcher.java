@@ -8,8 +8,8 @@ package me.gv7.tools.josearcher.searcher;
 
 
 import me.gv7.tools.josearcher.utils.CheckUtil;
+import me.gv7.tools.josearcher.utils.LogUtil;
 import me.gv7.tools.josearcher.utils.MatchUtil;
-import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.*;
 import static me.gv7.tools.josearcher.utils.CommonUtil.*;
@@ -17,7 +17,7 @@ import static me.gv7.tools.josearcher.utils.CommonUtil.write2log;
 import static me.gv7.tools.josearcher.utils.CheckUtil.*;
 
 public class JavaObjectSearcher {
-    private Logger logger = Logger.getLogger(JavaObjectSearcher.class);
+    //private Logger logger = Logger.getLogger(JavaObjectSearcher.class);
     private Object target;
     private String[]keys;
     private boolean is_search_all = false; /* true:搜索全部 false:搜到就返回,不会继续对命中目标的属性继续搜索 */
@@ -26,6 +26,7 @@ public class JavaObjectSearcher {
     private String project_name;
     private String result_file;
     private String all_chain_file;
+    private String run_log_file;
     private List<Object> searched = new ArrayList<>();
 
 
@@ -35,6 +36,7 @@ public class JavaObjectSearcher {
         this.project_name = project_name;
         this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
         this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
+        this.run_log_file = String.format("%s_error_%s.txt",project_name,getCurrentDate());
     }
 
 
@@ -43,6 +45,7 @@ public class JavaObjectSearcher {
         this.keys = keys;
         this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
         this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
+        this.run_log_file = String.format("%s_error_%s.txt",project_name,getCurrentDate());
         this.max_search_depth = max_search_depth;
     }
 
@@ -52,6 +55,7 @@ public class JavaObjectSearcher {
         this.keys = keys;
         this.result_file = String.format("%s_result_%s.txt",project_name,getCurrentDate());
         this.all_chain_file = String.format("%s_log_%s.txt",project_name,getCurrentDate());
+        this.run_log_file = String.format("%s_error_%s.txt",project_name,getCurrentDate());
         this.max_search_depth = max_search_depth;
         this.is_debug = is_debug;
     }
@@ -136,7 +140,8 @@ public class JavaObjectSearcher {
                     }
                 }
             }catch (Throwable e){
-                logger.error(String.format("%s - %s",project_name,"clazz.isArray"),e);
+                //logger.error(String.format("%s - %s",project_name,"clazz.isArray"),e);
+                LogUtil.saveThrowableInfo(e,this.run_log_file);
             }
         }
 
@@ -177,7 +182,8 @@ public class JavaObjectSearcher {
                             }
                         }
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"isList"),e);
+                        //logger.error(String.format("%s - %s",project_name,"isList"),e);
+                        LogUtil.saveThrowableInfo(e,this.run_log_file);
                     }
                 } else if (isMap(field)) {
                     try {
@@ -197,7 +203,8 @@ public class JavaObjectSearcher {
                         }
 
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"isMap"),e);
+                        //logger.error(String.format("%s - %s",project_name,"isMap"),e);
+                        LogUtil.saveThrowableInfo(e,this.run_log_file);
                     }
                 } else if (field.getType().isArray()) {
                     try {
@@ -220,7 +227,8 @@ public class JavaObjectSearcher {
                             }
                         }
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"isArray"),e);
+                        //logger.error(String.format("%s - %s",project_name,"isArray"),e);
+                        LogUtil.saveThrowableInfo(e,this.run_log_file);
                     }
                 } else {
                     try {
@@ -232,7 +240,8 @@ public class JavaObjectSearcher {
                             continue;
                         }
                     } catch (Throwable e) {
-                        logger.error(String.format("%s - %s",project_name,"class"),e);
+                        //logger.error(String.format("%s - %s",project_name,"class"),e);
+                        LogUtil.saveThrowableInfo(e,this.run_log_file);
                     }
                 }
             }
@@ -244,7 +253,6 @@ public class JavaObjectSearcher {
             String end_point = chain.length != 0 ? chain[chain.length-1]:chain[0];
             if(MatchUtil.matchClassType(end_point,this.keys)){
                 write2log(result_file,new_log_chain + "\n\n\n");
-
             }
         }
 

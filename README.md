@@ -1,7 +1,7 @@
 <h1 align="center">Java Object Searcher | java内存对象搜索辅助工具</h1>
 
 <p align="center">
-  <img title="portainer" src='https://img.shields.io/badge/version-0.01-brightgreen.svg' />
+  <img title="portainer" src='https://img.shields.io/badge/version-0.1.0-brightgreen.svg' />
   <img title="portainer" src='https://img.shields.io/badge/java-1.7.*-yellow.svg' />
   <img title="portainer" src='https://img.shields.io/badge/license-MIT-red.svg' />
 </p>
