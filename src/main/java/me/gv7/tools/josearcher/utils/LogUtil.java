@@ -13,7 +13,7 @@ public class LogUtil {
         return stringWriter.toString();
     }
 
-    public static void saveThrowableInfo(Throwable throwable,String fileName){
+    public static synchronized void saveThrowableInfo(Throwable throwable,String fileName){
         try {
             String throwableInfo = readThrowableInfo(throwable);
             FileWriter fileWriter = new FileWriter(new File(fileName),true);

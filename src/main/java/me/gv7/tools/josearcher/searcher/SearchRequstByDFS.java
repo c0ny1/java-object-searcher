@@ -92,11 +92,16 @@ public class SearchRequstByDFS {
             return;
         }
 
-        //如果已经搜索过这个对象就返回不再继续搜索
-        if(!visited.contains(filed_object)) {
-            visited.add(filed_object);
-        }else{
-            return;
+        try {
+            // 如果已经搜索过这个对象就返回不再继续搜索
+            // 注意：Set.contains 可能存在空指针异常
+            if (!visited.contains(filed_object)) {
+                visited.add(filed_object);
+            } else {
+                return;
+            }
+        }catch (Throwable e){
+            LogUtil.saveThrowableInfo(e,this.err_log_file);
         }
 
         String new_log_chain = "";
