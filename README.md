@@ -58,7 +58,7 @@ blacklists.add(new Blacklist.Builder().setField_name("request").setField_type("R
 
 ## 0x03 使用步骤
 
-**1. 将项目的java引入到目标应用的classpath中**
+**1. 将`java-object-searcher-<version>.jar`引入到目标应用的classpath中，或者可以放在jdk的ext目录(一劳永逸)**
 
 **2. 编写调用代码搜索目标对象**
 
