@@ -261,7 +261,8 @@ public class SearchRequstByDFS {
         }
 
         if(MatchUtil.matchObject(filed_name,filed_object,keys)){
-            write2log(result_file,new_log_chain + "\n\n\n");
+            write2log(result_file,new_log_chain + "\n");
+            write2log(result_file, "idea_express: " + genExpress(new_log_chain) + "\n\n\n");
         }
 
         if(is_debug) {

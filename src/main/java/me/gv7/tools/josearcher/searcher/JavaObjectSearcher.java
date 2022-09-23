@@ -106,7 +106,8 @@ public class JavaObjectSearcher {
         // 搜索
         if(!is_search_all){
             if(MatchUtil.matchClassType(clazz.getName(),this.keys)){
-                write2log(result_file,new_log_chain + "\n\n\n");
+                write2log(result_file,new_log_chain + "\n");
+                write2log(result_file, "idea_express: " + genExpress(new_log_chain) + "\n\n\n");
                 if(is_debug) {
                     write2log(all_chain_file, new_log_chain + "\n\n\n");
                 }
