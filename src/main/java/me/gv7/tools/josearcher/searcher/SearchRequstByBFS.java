@@ -9,8 +9,10 @@ import me.gv7.tools.josearcher.entity.NodeT;
 import me.gv7.tools.josearcher.utils.CheckUtil;
 import me.gv7.tools.josearcher.utils.LogUtil;
 import me.gv7.tools.josearcher.utils.MatchUtil;
+
 import java.lang.reflect.Field;
 import java.util.*;
+
 import static me.gv7.tools.josearcher.utils.CommonUtil.*;
 import static me.gv7.tools.josearcher.utils.CommonUtil.write2log;
 import static me.gv7.tools.josearcher.utils.CheckUtil.isList;
@@ -35,22 +37,22 @@ public class SearchRequstByBFS {
     private String err_log_file;
 
 
-    public SearchRequstByBFS(Object target, List<Keyword> keys){
+    public SearchRequstByBFS(Object target, List<Keyword> keys) {
         this.target = target;
         this.keys = keys;
         //把当前的元素加入到队列尾
         q.offer(new NodeT.Builder().setChain("").setField_name("TargetObject").setField_object(target).build());
     }
 
-    public void initSavePath(){
-        if(report_save_path == null){
-            this.result_file = String.format("%s_result_%s.txt",model_name,getCurrentDate());
-            this.all_chain_file = String.format("%s_log_%s.txt",model_name,getCurrentDate());
-            this.err_log_file = String.format("%s_error_%s.txt",model_name,getCurrentDate());
-        }else{
-            this.result_file = String.format("%s/%s_result_%s.txt",report_save_path,model_name,getCurrentDate());
-            this.all_chain_file = String.format("%s/%s_log_%s.txt",report_save_path,model_name,getCurrentDate());
-            this.err_log_file = String.format("%s_error_%s.txt",report_save_path,model_name,getCurrentDate());
+    public void initSavePath() {
+        if (report_save_path == null) {
+            this.result_file = String.format("%s_result_%s.txt", model_name, getCurrentDate());
+            this.all_chain_file = String.format("%s_log_%s.txt", model_name, getCurrentDate());
+            this.err_log_file = String.format("%s_error_%s.txt", model_name, getCurrentDate());
+        } else {
+            this.result_file = String.format("%s/%s_result_%s.txt", report_save_path, model_name, getCurrentDate());
+            this.all_chain_file = String.format("%s/%s_log_%s.txt", report_save_path, model_name, getCurrentDate());
+            this.err_log_file = String.format("%s_error_%s.txt", report_save_path, model_name, getCurrentDate());
         }
     }
 
@@ -75,9 +77,9 @@ public class SearchRequstByBFS {
         this.err_log_file = err_log_file;
     }
 
-    public void searchObject(){
+    public void searchObject() {
         this.initSavePath();
-        while(!q.isEmpty()){
+        while (!q.isEmpty()) {
             NodeT node = q.poll();
             String filed_name = node.getField_name();
             Object filed_object = node.getField_object();
@@ -86,11 +88,11 @@ public class SearchRequstByBFS {
             int current_depth = node.getCurrent_depth();
 
             //最多挖多深
-            if(current_depth > max_search_depth){
+            if (current_depth > max_search_depth) {
                 continue;
             }
 
-            if (filed_object == null || CheckUtil.isSysType(filed_object) || MatchUtil.isInBlacklist(filed_name,filed_object,this.blacklists)){
+            if (filed_object == null || CheckUtil.isSysType(filed_object) || MatchUtil.isInBlacklist(filed_name, filed_object, this.blacklists)) {
                 //如果object是null/基本数据类型/包装类/日期类型，则不需要在递归调用
                 continue;
             }
@@ -110,7 +112,8 @@ public class SearchRequstByBFS {
 
                     // 搜索操作
                     if (MatchUtil.matchObject(filed_name, filed_object, keys)) {
-                        write2log(result_file, new_log_chain + "\n\n\n");
+                        write2log(result_file, new_log_chain + "\n");
+                        write2log(result_file, "idea_express: " + genExpress(new_log_chain) + "\n\n\n");
                     }
                     if (is_debug) {
                         write2log(all_chain_file, new_log_chain + "\n\n\n");
@@ -263,8 +266,8 @@ public class SearchRequstByBFS {
                         }
                     }
                 }
-            }catch (Throwable e){
-                LogUtil.saveThrowableInfo(e,this.err_log_file);
+            } catch (Throwable e) {
+                LogUtil.saveThrowableInfo(e, this.err_log_file);
             }
         }
     }
